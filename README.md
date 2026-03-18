@@ -14,10 +14,15 @@ Both VMs are configured to host static websites:
 
 Virtual Network
 │
+
 ├── AzureBastionSubnet (Azure Bastion)
+
 │
+
 ├── Default Subnet
+
 │ ├── Windows VM (IIS)
+
 │ └── Linux VM (Nginx)
 
 
