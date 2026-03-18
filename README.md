@@ -1,4 +1,4 @@
-# 🚀 Azure Bastion VM Setup (Day 8)
+# 🚀 Azure Bastion VM Setup
 
 ## 📌 Overview
 This project demonstrates how to deploy and securely access **Windows and Linux Virtual Machines** on Microsoft Azure using **Azure Bastion**, without exposing RDP (3389) or SSH (22) ports to the internet.
