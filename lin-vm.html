@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux Instance | Secure Deployment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --lime: #32ff7e; --bg: #0a0a0a; }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background: var(--bg); font-family: 'Inter', sans-serif; color: white; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        .overlay { 
+            position: relative; z-index: 10; height: 100%; display: flex; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            pointer-events: none; text-align: center;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(50, 255, 126, 0.2);
+            padding: 4rem; border-radius: 40px;
+            box-shadow: 0 0 80px rgba(0,0,0,0.5);
+        }
+
+        .cmd-line {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0,0,0,0.5);
+            padding: 15px 25px; border-radius: 12px;
+            color: var(--lime); font-size: 1rem;
+            border-left: 4px solid var(--lime);
+            margin-bottom: 30px; display: inline-block;
+        }
+
+        h1 { font-size: 5rem; font-weight: 800; margin: 0; letter-spacing: -3px; line-height: 0.9; }
+        .sub-text { opacity: 0.5; letter-spacing: 4px; text-transform: uppercase; font-size: 0.9rem; margin-top: 15px; }
+        
+        .pulse-dot {
+            height: 10px; width: 10px; background-color: var(--lime);
+            border-radius: 50%; display: inline-block;
+            margin-right: 10px; box-shadow: 0 0 10px var(--lime);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="overlay">
+        <div class="glass-panel">
+            <div class="cmd-line">
+                $ ssh azureuser@cloud-vm <span style="color: white;">-i private_key.pem</span>
+            </div>
+            <h1>LINUX<br><span style="color: var(--lime)">DEPLOYED</span></h1>
+            <p class="sub-text">Infrastructure: Ubuntu Server | Proxy: Nginx</p>
+            <div style="margin-top: 40px;">
+                <span class="pulse-dot"></span> <span style="font-family: 'Fira Code'">Status: Secure Connection (Bastion)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        const mouse = { x: null, y: null };
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(50, 255, 126, 0.5)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 100; i++) { particles.push(new Particle()); }
+        }
+
+        function handleParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 150) {
+                        ctx.strokeStyle = 'rgba(50, 255, 126,' + (1 - distance/150) + ')';
+                        ctx.lineWidth = 1; ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+                // Connect to mouse
+                const mDx = particles[i].x - mouse.x;
+                const mDy = particles[i].y - mouse.y;
+                const mDist = Math.sqrt(mDx * mDx + mDy * mDy);
+                if (mDist < 200) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255,' + (1 - mDist/200) + ')';
+                    ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            handleParticles(); requestAnimationFrame(animate);
+        }
+        init(); animate();
+    </script>
+</body>
+</html>
