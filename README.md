@@ -115,3 +115,52 @@ Run in PowerShell:
 ```powershell
 Install-WindowsFeature -name Web-Server -IncludeManagementTools
 
+```
+
+Update website:
+
+notepad C:\inetpub\wwwroot\index.html
+🐧 Linux VM (Nginx Setup)
+sudo apt update && sudo apt upgrade -y
+sudo apt install nginx -y
+
+Update website:
+
+cd /var/www/html
+sudo nano index.html
+🌍 Output
+
+Windows VM hosting a static website via IIS
+
+Linux VM hosting a static website via Nginx
+
+📂 Repository Contents
+
+README.md → Project documentation
+
+Website files (HTML)
+
+Terraform code (if added later)
+
+🧠 Key Learnings
+
+Secure VM access using Azure Bastion
+
+Avoid exposing sensitive ports to the internet
+
+Hosting web servers on both Windows and Linux
+
+Hands-on with IIS and Nginx
+
+🔗 Future Improvements
+
+Automate setup using Terraform
+
+Add Load Balancer
+
+Integrate with Azure Monitor
+
+🙌 Author
+
+Siddhesh Khanorkar
+Cloud & DevOps Learner ☁️
